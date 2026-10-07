@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Our Date Bank</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Date Bank">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#6D1F2E">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#FBF7F2;--card:#fff;--ink:#2B2B2B;--mut:#7A7A7A;--wine:#6D1F2E;--blush:#F2DDDF;--line:#E6D9CD;--green:#5E8C6A;--gold:#F7ECC8}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1a1b;--card:#272324;--ink:#eee;--mut:#a9a2a3;--wine:#e3a3ae;--blush:#3a2a2d;--line:#3a3436;--green:#8cc29a;--gold:#4a3f1d}}
+:root[data-theme="dark"]{--bg:#1d1a1b;--card:#272324;--ink:#eee;--mut:#a9a2a3;--wine:#e3a3ae;--blush:#3a2a2d;--line:#3a3436;--green:#8cc29a;--gold:#4a3f1d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Arial,Helvetica,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:18px 14px 40px}
+h1{font:700 30px Georgia,serif;color:var(--wine);text-align:center;margin:6px 0 2px}
+.sub{text-align:center;color:var(--mut);font-style:italic;margin:0 0 14px;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:14px}
+.stat{background:var(--card);border-top:3px solid var(--wine);padding:8px 6px;text-align:center;border-radius:4px}
+.stat b{display:block;font:700 20px Georgia,serif;color:var(--wine)}.stat small{color:var(--mut);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;padding:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;font-weight:700;cursor:pointer}
+.tabs button.on{background:var(--wine);color:#fff;border-color:var(--wine)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+select,input,textarea{font:inherit;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);max-width:100%}
+.btn{background:var(--wine);color:#fff;border:0;padding:9px 14px;border-radius:6px;font-weight:700;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--wine);border:1px solid var(--wine)}
+.name{font:700 17px Georgia,serif;color:var(--wine)}
+.mut{color:var(--mut);font-size:13px}
+.tag{display:inline-block;background:var(--blush);color:var(--wine);border-radius:10px;padding:1px 9px;font-size:12px;margin-right:4px}
+.tag.done{background:var(--green);color:#fff}.tag.must{background:var(--wine);color:#fff}
+.big{text-align:center;padding:22px 12px;border:2px solid var(--wine)}
+.big .name{font-size:26px}
+a{color:var(--wine)}
+details.add summary{cursor:pointer;font-weight:700;color:var(--wine);padding:4px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:8px}
+.note{background:var(--gold);padding:8px 10px;border-radius:6px;font-size:13px;margin-bottom:10px}
+.tabs{overflow-x:auto}.tabs button{flex:0 0 auto;padding:10px 12px;white-space:nowrap}
+.bar{display:grid;grid-template-columns:105px 1fr 74px;gap:6px;align-items:center;font-size:12px;margin:4px 0}.bar div{background:var(--blush);height:10px;border-radius:5px}.bar i{display:block;height:100%;background:var(--wine);border-radius:5px}.bar b{text-align:right;font-size:11px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+</style></head><body><div class="wrap">
+<h1>OUR DATE BANK ❤️</h1>
+<p class="sub">a little book of places, plans and memories — made for two</p>
+<div id="msg"></div>
+<div id="auth" class="card" hidden><div class="name">Sign in</div><div class="grid"><input id="em" type="email" placeholder="Email" autocomplete="email"><input id="pw" type="password" placeholder="Password (6+ characters)" autocomplete="current-password"></div>
+<div class="row" style="margin-top:8px"><button class="btn" id="signin">Sign in</button><button class="btn ghost" id="signup">Create account</button></div></div>
+<div id="app" hidden>
+<div class="stats" id="stats"></div>
+<details class="card add"><summary>➕ Add a date idea</summary>
+ <div class="grid"><input id="n" placeholder="Date idea / place name *"><select id="c"></select><input id="l" placeholder="Location"><input id="b" type="number" min="0" placeholder="Budget for two (₦)"><select id="bf"></select><select id="p"><option>Must Try</option><option selected>Would Like to Try</option><option>Maybe</option></select><select id="tr"><option>Auto (from budget)</option><option>₦ – Under ₦20,000</option><option>₦₦ – ₦20,000–₦50,000</option><option>₦₦₦ – ₦50,000–₦100,000</option><option>₦₦₦₦ – ₦100,000+</option></select></div>
+ <textarea id="d" rows="2" style="width:100%;margin-top:8px" placeholder="Short description"></textarea>
+ <div style="margin-top:8px"><button class="btn" id="addbtn">Add to our bank</button></div></details>
+<div class="card" id="wf" hidden><div class="name" style="font-size:15px">✨ Add to wishlist</div><div class="grid"><input id="wn" placeholder="Place / idea *"><select id="wc"></select><input id="wl" placeholder="Location"><input id="wb" type="number" placeholder="Est. budget (₦)"><select id="wp"><option>Must Try</option><option selected>Would Like to Try</option><option>Maybe</option></select></div><textarea id="ww" rows="2" style="width:100%;margin-top:8px" placeholder="Why we want to go"></textarea><div style="margin-top:8px"><button class="btn" id="wadd">Save to wishlist</button></div></div>
+<div class="card" id="sf" hidden><div class="name" style="font-size:15px">🎉 Add a special date</div><div class="grid"><input id="sn" placeholder="Occasion *"><select id="st"><option>Anniversary</option><option>Birthday</option><option>Holiday</option><option>Milestone</option><option>Other</option></select><input id="sd" type="date"></div><input id="si" style="width:100%;margin-top:8px" placeholder="Celebration idea"><div style="margin-top:8px"><button class="btn" id="sadd">Save</button></div></div>
+<div class="tabs"><button data-tab="pick" class="on">🎲 Pick</button><button data-tab="bank">📖 Bank</button><button data-tab="dash">📊 Dashboard</button><button data-tab="mem">💞 Memories</button><button data-tab="wish">✨ Wishlist</button><button data-tab="mon">📅 Months</button><button data-tab="spc">🎉 Special</button></div>
+<div id="view"></div>
+<p style="text-align:center"><button class="btn ghost" id="signout">Sign out</button></p></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const CATS=["🍽️ Dinner","🥞 Breakfast","🥗 Lunch","☕ Café / Coffee","🍿 Movies","🎨 Creative / Arts","🎮 Games","🎵 Music / Concert","🏖️ Beach","🌳 Outdoor","🧗 Adventure","🏎️ Adrenaline","🧖 Relaxation / Spa","🏨 Staycation","✈️ Day Trip","🌃 Nightlife","🛍️ Shopping","🍷 Wine / Drinks","🍳 Cook Together","🏠 At-Home Date","📸 Photoshoot","❤️ Romantic","🎉 Special Occasion","💡 Random / Unplanned"];
+const BEST=["Casual","Romantic","Fun","Luxury","Chill","Adventure","Special Occasion","Spontaneous"];
+const MOOD={Romantic:["Romantic","Special Occasion"],Chill:["Chill","Casual"],Fun:["Fun","Adventure"],Adventurous:["Adventure","Fun"],Fancy:["Luxury","Special Occasion"],Casual:["Casual","Chill"],Spontaneous:["Spontaneous","Casual"]};
+const ST={"Not Yet":"💚 Not Yet","Planned":"💛 Planned","Booked":"💙 Booked","Done":"❤️ Done","Maybe Later":"💤 Maybe Later"};
+const BUD={any:[0,1e12,"Any budget"],a:[0,20000,"Under ₦20k"],b:[20000,50000,"₦20k–₦50k"],c:[50000,100000,"₦50k–₦100k"],d:[100000,1e12,"₦100k+"]};
+const SEED=[["Dinner at Nok by Alara",0,"Victoria Island",65000,"Romantic","Must Try"],["Sunday Brunch at Craft Gourmet",1,"Lekki Phase 1",38000,"Chill","Would Like to Try"],["Waterfront Lunch at Kuramo Waters",2,"Victoria Island",45000,"Chill","Would Like to Try"],["Books & Coffee at The Jazzhole",3,"Ikoyi",15000,"Chill","Must Try"],["IMAX Movie Night at Filmhouse Lekki",4,"Lekki",24000,"Fun","Would Like to Try"],["Nike Art Gallery & Craft Hunt",5,"Lekki",12000,"Chill","Must Try"],["Bowling Night",6,"Lekki / Ikeja",32000,"Fun","Would Like to Try"],["Landmark Beach Day",8,"Oniru, Victoria Island",55000,"Chill","Would Like to Try"],["Lekki Conservation Centre Canopy Walk",9,"Lekki",15000,"Adventure","Must Try"],["Sunset Lagoon Boat Cruise",10,"Victoria Island / Marina",85000,"Romantic","Must Try"],["Go-Karting Race Day",11,"Lekki / Victoria Island",45000,"Adventure","Must Try"],["Couples Spa Day",12,"Victoria Island / Ikoyi",120000,"Chill","Must Try"],["Badagry Heritage Day Trip",14,"Badagry",65000,"Adventure","Must Try"],["Rooftop Lounge Night",15,"Victoria Island",80000,"Fun","Would Like to Try"],["Jollof Cook-Off at Home",18,"At home",15000,"Fun","Must Try"],["Board Games & Chops Night",19,"At home",8000,"Casual","Maybe"],["Golden-Hour Couple Shoot",20,"Lekki",60000,"Romantic","Would Like to Try"],["Rooftop Dinner",21,"Victoria Island",95000,"Romantic","Must Try"],["Sunset Beach Picnic",21,"Landmark / Elegushi Beach",30000,"Romantic","Must Try"],["Anniversary Dinner Cruise",22,"Victoria Island / Marina",250000,"Special Occasion","Must Try"],["Mystery Ride",23,"Anywhere in Lagos",15000,"Spontaneous","Maybe"]];
+let items=[],coll=null,tab="pick",pick=null,f={cat:"All",bud:"any",mood:"any",q:"",st:"open"};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const N=n=>"₦"+Math.round(+n||0).toLocaleString("en-NG");
+const link=i=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(i.name+" "+(i.loc&&!/home|anywhere/i.test(i.loc)?i.loc+" ":"")+"Lagos");
+const opts=(a,sel)=>a.map(x=>`<option${x===sel?" selected":""}>${esc(x)}</option>`).join("");
+$("#c").innerHTML=opts(CATS);$("#bf").innerHTML=opts(BEST);
+
+
+const cfg=window.APP_CONFIG,sb=supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY);
+const msg=t=>$("#msg").innerHTML=t?`<div class="note">${esc(t)}</div>`:"";
+let wish=[],spec=[];const arr=id=>id[0]==="w"?wish:id[0]==="s"?spec:items,uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+async function load(){const{data,error}=await sb.from("dates").select("id,data");if(error){msg(error.message);return}const r=data.map(x=>({...x.data,id:x.id}));items=r.filter(x=>x.id[0]==="d");wish=r.filter(x=>x.id[0]==="w");spec=r.filter(x=>x.id[0]==="s");render()}
+async function save(i){const a=arr(i.id),k=a.findIndex(x=>x.id===i.id);k<0?a.push(i):a[k]=i;render();const{error}=await sb.from("dates").upsert({id:i.id,data:i});if(error){msg("Couldn’t save: "+error.message);load()}}
+async function del(id){const a=arr(id),k=a.findIndex(x=>x.id===id);if(k>=0)a.splice(k,1);render();const{error}=await sb.from("dates").delete().eq("id",id);if(error)msg(error.message)}
+const mk=o=>({id:"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),status:"Not Yet",added:Date.now(),desc:"",went:"",rating:0,spent:"",notes:"",...o});
+
+$("#addbtn").onclick=()=>{const n=$("#n").value.trim();if(!n)return;save(mk({name:n,cat:$("#c").value,loc:$("#l").value,budget:+$("#b").value||0,best:$("#bf").value,prio:$("#p").value,tier:$("#tr").value.startsWith("Auto")?"":$("#tr").value,desc:$("#d").value}));["n","l","b","d"].forEach(x=>$("#"+x).value="");$("#tr").selectedIndex=0;$(".add").open=false};
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));render()});
+
+function stats(){
+ const done=items.filter(i=>i.status==="Done"),rated=done.filter(i=>i.rating>0);
+ const avgB=items.length?items.reduce((s,i)=>s+(+i.budget||0),0)/items.length:0;
+ const avgR=rated.length?rated.reduce((s,i)=>s+i.rating,0)/rated.length:0;
+ const planned=items.filter(i=>/Planned|Booked/.test(i.status)).length;
+ const spent=done.reduce((s,i)=>s+(+i.spent||0),0);
+ const months=new Set(done.filter(i=>i.went).map(i=>i.went.slice(0,7)));
+ let streak=0,d=new Date();d.setDate(1);
+ const key=x=>x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0");
+ if(!months.has(key(d)))d.setMonth(d.getMonth()-1);
+ while(months.has(key(d))){streak++;d.setMonth(d.getMonth()-1)}
+ const S=(v,l)=>`<div class="stat"><b>${v}</b><small>${l}</small></div>`;
+ $("#stats").innerHTML=S(items.length,"Ideas")+S(done.length,"Completed")+S(planned,"Planned")+S(N(avgB),"Avg budget")+S(avgR?avgR.toFixed(1)+" ⭐":"–","Avg rating")+S(N(spent),"Spent")+S(streak+" mo","Streak");
+}
+function matches(){return items.filter(i=>{if(i.status==="Done")return false;if(i.status==="Maybe Later"&&0)return false;
+ const [lo,hi]=BUD[f.bud];const b=+i.budget||0;
+ return (f.cat==="All"||i.cat===f.cat)&&b>=lo&&b<hi&&(f.mood==="any"||(MOOD[f.mood]||[]).includes(i.best))}).sort((a,b)=>(a.prio==="Must Try"?0:1)-(b.prio==="Must Try"?0:1))}
+function tags(i){return `<span class="tag">${esc(i.cat)}</span><span class="tag">${N(i.budget)}</span>${i.best?`<span class="tag">${esc(i.best)}</span>`:""}${i.prio==="Must Try"?'<span class="tag must">Must Try</span>':""}`}
+function viewPick(){
+ const m=matches();
+ let h=`<div class="card"><div class="row"><select data-f="cat"><option>All</option>${CATS.map(c=>`<option${c===f.cat?" selected":""}>${esc(c)}</option>`).join("")}</select>
+ <select data-f="bud">${Object.entries(BUD).map(([k,v])=>`<option value="${k}"${k===f.bud?" selected":""}>${v[2]}</option>`).join("")}</select>
+ <select data-f="mood"><option value="any">Any mood</option>${Object.keys(MOOD).map(k=>`<option${k===f.mood?" selected":""}>${k}</option>`).join("")}</select>
+ <button class="btn" data-act="roll">🎲 SURPRISE US</button></div><div class="mut" style="margin-top:6px">${m.length} idea${m.length==1?"":"s"} match</div></div>`;
+ const p=pick&&items.find(i=>i.id===pick&&i.status!=="Done");
+ if(p)h+=`<div class="card big"><div class="mut">Tonight, how about…</div><div class="name">${esc(p.name)}</div><p>${esc(p.desc)}</p><div>${tags(p)}</div><p class="mut">📍 ${esc(p.loc)} · <a href="${link(p)}" target="_blank" rel="noopener">Open map ↗</a></p>
+ <button class="btn" data-act="roll">🎲 Roll again</button> <button class="btn ghost" data-act="plan" data-id="${p.id}">💛 Mark as planned</button></div>`;
+ else if(!items.length)h+=`<div class="card">Your bank is empty. <button class="btn" data-act="seed">Add 21 starter Lagos ideas</button></div>`;
+ return h+m.slice(0,12).map(i=>`<div class="card"><div class="name">${esc(i.name)}</div><div class="mut">📍 ${esc(i.loc)}</div><div>${tags(i)}</div></div>`).join("");
+}
+function viewBank(){
+ let l=items.filter(i=>(f.st==="all"||(f.st==="open"?i.status!=="Done":i.status===f.st))&&(!f.q||(i.name+i.cat+i.loc).toLowerCase().includes(f.q.toLowerCase())));
+ l.sort((a,b)=>b.added-a.added);
+ let h=`<div class="card row"><input data-f="q" placeholder="Search…" value="${esc(f.q)}"><select data-f="st"><option value="open"${f.st==="open"?" selected":""}>Still to do</option><option value="all"${f.st==="all"?" selected":""}>Everything</option>${Object.keys(ST).map(s=>`<option value="${s}"${f.st===s?" selected":""}>${ST[s]}</option>`).join("")}</select></div>`;
+ return h+l.map(i=>`<div class="card"><div class="name">${esc(i.name)}</div><div class="mut">${esc(i.desc)} · 📍 ${esc(i.loc)} · <a href="${link(i)}" target="_blank" rel="noopener">map ↗</a></div><div style="margin:6px 0">${tags(i)}</div>
+ <div class="row"><select data-id="${i.id}" data-k="status">${Object.keys(ST).map(s=>`<option value="${s}"${i.status===s?" selected":""}>${ST[s]}</option>`).join("")}</select>
+ <select data-id="${i.id}" data-k="tier" title="Budget tier">${TIERS.map(t=>`<option${tierOf(i)===t?" selected":""}>${t}</option>`).join("")}</select>
+ ${i.status==="Done"?"":`<button class="btn ghost" data-act="del" data-id="${i.id}">Remove</button>`}</div>
+ ${i.status==="Done"?doneForm(i):""}</div>`).join("")||'<div class="card mut">Nothing here yet.</div>';
+}
+function doneForm(i){return `<div class="grid"><input type="date" data-id="${i.id}" data-k="went" value="${i.went}"><select data-id="${i.id}" data-k="rating"><option value="0">Rating…</option>${[1,2,3,4,5].map(r=>`<option value="${r}"${i.rating==r?" selected":""}>${"⭐".repeat(r)}</option>`).join("")}</select><input type="number" placeholder="Amount spent (₦)" data-id="${i.id}" data-k="spent" value="${i.spent}"><input placeholder="Favorite moment / notes" data-id="${i.id}" data-k="notes" value="${esc(i.notes)}"></div>`}
+function viewMem(){
+ const d=items.filter(i=>i.status==="Done").sort((a,b)=>(b.went||"").localeCompare(a.went||""));
+ return d.map(i=>`<div class="card"><div class="name">${esc(i.name)}</div><div class="mut">${i.went||"date not set"} · ${N(i.spent)} spent</div><div>${"⭐".repeat(i.rating||0)}</div><div>${esc(i.notes)}</div></div>`).join("")||'<div class="card mut">No memories yet — set a date to ❤️ Done in the Date Bank and add the details.</div>';
+}
+$("#view").addEventListener("click",async e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;
+ if(a==="roll"){const m=matches();if(m.length){let c;do{c=m[Math.floor(Math.random()*m.length)]}while(m.length>1&&c.id===pick);pick=c.id}render()}
+ if(a==="plan"){const i=items.find(x=>x.id===b.dataset.id);if(i)save({...i,status:"Planned"})}
+ if(a==="del"&&confirm("Remove this idea?"))del(b.dataset.id);
+ if(a==="seed"){for(const s of SEED)await save(mk({name:s[0],cat:CATS[s[1]],loc:s[2],budget:s[3],best:s[4],prio:s[5]}))}});
+$("#view").addEventListener("change",e=>{const t=e.target;
+ if(t.dataset.f){f[t.dataset.f]=t.value;render();return}
+ if(t.dataset.id){const i=items.find(x=>x.id===t.dataset.id);if(!i)return;let v=t.value;if(t.dataset.k==="rating")v=+v;save({...i,[t.dataset.k]:v})}});
+$("#view").addEventListener("input",e=>{if(e.target.dataset.f==="q"){f.q=e.target.value;const p=e.target.selectionStart;render();const q=$('[data-f="q"]');q.focus();q.setSelectionRange(p,p)}});
+render();
+
+
+const TIERS=["₦ – Under ₦20,000","₦₦ – ₦20,000–₦50,000","₦₦₦ – ₦50,000–₦100,000","₦₦₦₦ – ₦100,000+"],tierOf=i=>{const b=+i.budget||0;return i.tier||TIERS[b<2e4?0:b<5e4?1:b<1e5?2:3]};
+const catName=c=>String(c||"").replace(/^\S+\s/,"");
+const sec=(t,h)=>`<div class="card"><div class="name" style="font-size:15px">${t}</div>${h}</div>`;
+const bars=(rows,fmt=x=>x)=>{const m=Math.max(1,...rows.map(r=>r[1]));return rows.map(r=>`<div class="bar"><span>${esc(r[0])}</span><div><i style="width:${r[1]/m*100}%"></i></div><b>${fmt(r[1])}</b></div>`).join("")||'<div class="mut">Nothing yet</div>'};
+const lst=(a,f)=>a.length?a.map(f).join(""):'<div class="mut">Nothing yet</div>';
+function viewDash(){
+ const by={},bud={};items.forEach(i=>{const c=catName(i.cat);by[c]=(by[c]||0)+1;bud[c]=(bud[c]||0)+(+i.budget||0)});
+ const top=(o,n)=>Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,n);
+ const done=items.filter(i=>i.status==="Done").length,pl=items.filter(i=>/Planned|Booked/.test(i.status)).length,rest=items.length-done-pl,t=items.length||1,C=2*Math.PI*40;
+ const seg=(v,o,col)=>`<circle r="40" cx="60" cy="60" fill="none" stroke="${col}" stroke-width="18" stroke-dasharray="${v/t*C} ${C}" stroke-dashoffset="${-o/t*C}" transform="rotate(-90 60 60)"/>`;
+ const tiers=TIERS.map(l=>[l.split(" – ")[1],items.filter(i=>tierOf(i)===l).length]);
+ const rated=items.filter(i=>i.status==="Done"&&i.rating).sort((a,b)=>b.rating-a.rating).slice(0,5),must=items.filter(i=>i.prio==="Must Try"&&i.status!=="Done").slice(0,5),rec=[...items].sort((a,b)=>b.added-a.added).slice(0,5);
+ const row=(i,x)=>`<div style="padding:5px 0;border-bottom:1px solid var(--line)"><b>${esc(i.name)}</b> <span class="mut">${x}</span></div>`;
+ return `<div class="two">`+sec("Date ideas by category",bars(top(by,12)))+sec("Completed vs uncompleted",`<div class="row"><svg width="120" height="120" viewBox="0 0 120 120"><circle r="40" cx="60" cy="60" fill="none" stroke="var(--line)" stroke-width="18"/>${seg(done,0,"var(--green)")}${seg(pl,done,"#D9B3B8")}${seg(rest,done+pl,"var(--mut)")}</svg><div class="mut">❤️ Completed: <b>${done}</b><br>💛 Planned / booked: <b>${pl}</b><br>💚 Still to try: <b>${rest}</b></div></div>`)+`</div><div class="two">`+sec("Budget by category (total ₦)",bars(top(bud,8),v=>"₦"+Math.round(v/1000)+"k"))+sec("Budget tiers",bars(tiers))+`</div><div class="two">`+sec("⭐ Top rated",lst(rated,i=>row(i,"⭐".repeat(i.rating))))+sec("💗 Must try",lst(must,i=>row(i,N(i.budget))))+`</div>`+sec("✨ Recently added",lst(rec,i=>row(i,esc(catName(i.cat))+" · "+N(i.budget))));
+}
+function viewWish(){return lst([...wish].sort((a,b)=>b.added-a.added),w=>`<div class="card"><div class="name">${esc(w.name)}</div><div class="mut">${esc(w.why)} · 📍 ${esc(w.loc)}</div><div style="margin:6px 0"><span class="tag">${esc(w.cat)}</span><span class="tag">${N(w.budget)}</span>${w.prio==="Must Try"?'<span class="tag must">Must Try</span>':""}</div><div class="row"><select data-w="${w.id}">${["💭 Thinking","🔍 Researching"].map(x=>`<option${w.wstatus===x?" selected":""}>${x}</option>`).join("")}</select><button class="btn" data-act="wmove" data-id="${w.id}">➡️ Move to Date Bank</button><button class="btn ghost" data-act="wdel" data-id="${w.id}">Remove</button></div></div>`)}
+function viewMon(){const now=new Date(),R=[];for(let k=0;k<12;k++){const d=new Date(now.getFullYear(),now.getMonth()-k,1),key=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"),m=items.filter(i=>i.status==="Done"&&(i.went||"").startsWith(key));R.push({l:d.toLocaleString("en",{month:"short",year:"2-digit"}),n:m.length,sp:m.reduce((s,i)=>s+(+i.spent||0),0),fav:[...m].sort((a,b)=>b.rating-a.rating)[0]})}
+ return sec("💸 Spending on dates — last 12 months",bars(R.map(r=>[r.l,r.sp]),v=>"₦"+Math.round(v/1000)+"k"))+sec("🏅 Date of the Month",R.map(r=>`<div style="padding:5px 0;border-bottom:1px solid var(--line)"><b>${r.l}</b> · ${r.n} date${r.n==1?"":"s"} · ${r.fav?esc(r.fav.name)+" "+"⭐".repeat(r.fav.rating||0):'<span class="mut">—</span>'}</div>`).join(""))}
+const nextOcc=s=>{const[,m,d]=s.date.split("-").map(Number),t=new Date();t.setHours(0,0,0,0);let o=new Date(t.getFullYear(),m-1,d);if(o<t)o=new Date(t.getFullYear()+1,m-1,d);return o};
+function viewSpec(){const t=new Date();t.setHours(0,0,0,0);const L=spec.filter(x=>x.date).map(x=>{const o=nextOcc(x);return{...x,o,days:Math.round((o-t)/864e5)}}).sort((a,b)=>a.days-b.days);
+ return (L.length?"":`<div class="card">No special dates yet. <button class="btn" data-act="sseed">Add Valentine’s, Christmas &amp; New Year’s Eve</button></div>`)+L.map(x=>`<div class="card"><div class="name">${esc(x.name)} <span class="tag">${esc(x.type)}</span></div><div>${x.o.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"})} · <b>${x.days==0?"today 🎉":"in "+x.days+" days"}</b></div><div class="mut">${esc(x.idea)}</div><button class="btn ghost" data-act="sdel" data-id="${x.id}" style="margin-top:6px">Remove</button></div>`).join("")}
+function render(){stats();$("#wf").hidden=tab!=="wish";$("#sf").hidden=tab!=="spc";$(".add").hidden=!["pick","bank"].includes(tab);$("#view").innerHTML=({pick:viewPick,bank:viewBank,mem:viewMem,dash:viewDash,wish:viewWish,mon:viewMon,spc:viewSpec})[tab]()}
+$("#wc").innerHTML=opts(CATS);
+$("#wadd").onclick=()=>{const n=$("#wn").value.trim();if(!n)return;save({id:"w"+uid(),name:n,cat:$("#wc").value,loc:$("#wl").value,budget:+$("#wb").value||0,why:$("#ww").value,prio:$("#wp").value,wstatus:"💭 Thinking",added:Date.now()});["wn","wl","wb","ww"].forEach(x=>$("#"+x).value="")};
+$("#sadd").onclick=()=>{const n=$("#sn").value.trim();if(!n||!$("#sd").value)return;save({id:"s"+uid(),name:n,type:$("#st").value,date:$("#sd").value,idea:$("#si").value});["sn","sd","si"].forEach(x=>$("#"+x).value="")};
+$("#view").addEventListener("click",async e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act,id=b.dataset.id;
+ if(a==="wmove"){const w=wish.find(x=>x.id===id);if(w){await save(mk({name:w.name,cat:w.cat,loc:w.loc,budget:w.budget,best:"",prio:w.prio,desc:w.why}));del(id)}}
+ if(a==="wdel"&&confirm("Remove from wishlist?"))del(id);
+ if(a==="sdel"&&confirm("Remove this special date?"))del(id);
+ if(a==="sseed"){const y=new Date().getFullYear();for(const x of [["Valentine’s Day","Holiday",y+"-02-14","Candlelight dinner and a handwritten note"],["Christmas Day","Holiday",y+"-12-25","Matching pyjamas and a long lunch at home"],["New Year’s Eve","Holiday",y+"-12-31","Rooftop countdown or a quiet night in"]])await save({id:"s"+uid(),name:x[0],type:x[1],date:x[2],idea:x[3]})}});
+$("#view").addEventListener("change",e=>{const id=e.target.dataset.w;if(id){const w=wish.find(x=>x.id===id);if(w)save({...w,wstatus:e.target.value})}});
+function start(){$("#auth").hidden=true;$("#app").hidden=false;load();sb.channel("dates").on("postgres_changes",{event:"*",schema:"public",table:"dates"},load).subscribe()}
+$("#signin").onclick=async()=>{const{error}=await sb.auth.signInWithPassword({email:$("#em").value.trim(),password:$("#pw").value});error?msg(error.message):(msg(""),start())};
+$("#signup").onclick=async()=>{const{error}=await sb.auth.signUp({email:$("#em").value.trim(),password:$("#pw").value});msg(error?error.message:"Account created — now tap Sign in (check your email first if Supabase asks you to confirm).")};
+$("#signout").onclick=async()=>{await sb.auth.signOut();location.reload()};
+sb.auth.getSession().then(({data})=>{data.session?start():($("#auth").hidden=false)});
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
+</script></body></html>
