@@ -42,12 +42,35 @@ details.add summary{cursor:pointer;font-weight:700;color:var(--wine);padding:4px
 .tabs{overflow-x:auto}.tabs button{flex:0 0 auto;padding:10px 12px;white-space:nowrap}
 .bar{display:grid;grid-template-columns:105px 1fr 74px;gap:6px;align-items:center;font-size:12px;margin:4px 0}.bar div{background:var(--blush);height:10px;border-radius:5px}.bar i{display:block;height:100%;background:var(--wine);border-radius:5px}.bar b{text-align:right;font-size:11px}
 .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+label.l{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:10px 0 4px}
+.pw{position:relative}.pw input,.f100{width:100%}.pw input{padding-right:46px}
+.eye{position:absolute;right:0;top:0;height:100%;min-width:44px;background:none;border:0;color:var(--mut);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.eye svg{width:20px;height:20px}.between{justify-content:space-between}.chk{display:flex;gap:8px;align-items:center;min-height:44px}.chk input{width:20px;height:20px}
+.btn,.tabs button,select,input{min-height:40px}.btn.full{width:100%;margin-top:10px}.btn[disabled]{opacity:.6}
+.ok{background:var(--green);color:#fff}.icons{display:flex;gap:10px;flex-wrap:wrap}.icons button{background:none;border:2px solid var(--line);border-radius:16px;padding:3px;cursor:pointer}.icons button.on{border-color:var(--wine)}.icons img{width:64px;height:64px;border-radius:14px;display:block}
+.kv{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
 </style></head><body><div class="wrap">
 <h1>OUR DATE BANK ❤️</h1>
 <p class="sub">a little book of places, plans and memories — made for two</p>
 <div id="msg"></div>
-<div id="auth" class="card" hidden><div class="name">Sign in</div><div class="grid"><input id="em" type="email" placeholder="Email" autocomplete="email"><input id="pw" type="password" placeholder="Password (6+ characters)" autocomplete="current-password"></div>
-<div class="row" style="margin-top:8px"><button class="btn" id="signin">Sign in</button><button class="btn ghost" id="signup">Create account</button></div></div>
+<div id="auth" hidden>
+<div class="card" id="v-login"><div class="name">Sign in</div>
+<label class="l" for="em">Email</label><input id="em" class="f100" type="email" autocomplete="email" inputmode="email">
+<label class="l" for="pw">Password</label><div class="pw"><input id="pw" type="password" autocomplete="current-password"><button type="button" class="eye" data-eye="pw" aria-label="Show password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<div class="row between"><label class="chk"><input type="checkbox" id="rm" checked> Remember me</label><a href="#" id="tofg">Forgot Password?</a></div>
+<button class="btn full" id="signin">SIGN IN</button>
+<button class="btn ghost full" id="signup">Create account</button></div>
+<div class="card" id="v-forgot" hidden><div class="name">Forgot password?</div><p class="mut">Enter your email and we’ll send you a link to choose a new password.</p>
+<label class="l" for="fe">Email</label><input id="fe" class="f100" type="email" autocomplete="email" inputmode="email">
+<button class="btn full" id="fgbtn">Send reset link</button><p style="text-align:center"><a href="#" class="tolog">← Back to sign in</a></p></div>
+<div class="card" id="v-reset" hidden><div class="name">Choose a new password</div><p class="mut">At least 8 characters, with a letter and a number.</p>
+<label class="l" for="np">New password</label><div class="pw"><input id="np" type="password" autocomplete="new-password"><button type="button" class="eye" data-eye="np" aria-label="Show password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<label class="l" for="np2">Repeat new password</label><div class="pw"><input id="np2" type="password" autocomplete="new-password"><button type="button" class="eye" data-eye="np2" aria-label="Show password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<button class="btn full" id="rsbtn">Update password</button><p style="text-align:center"><a href="#" class="tolog">← Back to sign in</a></p></div>
+<div class="card" id="v-lock" hidden style="text-align:center"><div class="name">Welcome back 💞</div><p class="mut">Unlock to open your Date Bank.</p>
+<button class="btn full" id="biobtn">🔐 Unlock with Face ID / Fingerprint</button>
+<p><a href="#" id="usepw">Use password instead</a></p></div>
+</div>
 <div id="app" hidden>
 <div class="stats" id="stats"></div>
 <details class="card add"><summary>➕ Add a date idea</summary>
@@ -56,11 +79,11 @@ details.add summary{cursor:pointer;font-weight:700;color:var(--wine);padding:4px
  <div style="margin-top:8px"><button class="btn" id="addbtn">Add to our bank</button></div></details>
 <div class="card" id="wf" hidden><div class="name" style="font-size:15px">✨ Add to wishlist</div><div class="grid"><input id="wn" placeholder="Place / idea *"><select id="wc"></select><input id="wl" placeholder="Location"><input id="wb" type="number" placeholder="Est. budget (₦)"><select id="wp"><option>Must Try</option><option selected>Would Like to Try</option><option>Maybe</option></select></div><textarea id="ww" rows="2" style="width:100%;margin-top:8px" placeholder="Why we want to go"></textarea><div style="margin-top:8px"><button class="btn" id="wadd">Save to wishlist</button></div></div>
 <div class="card" id="sf" hidden><div class="name" style="font-size:15px">🎉 Add a special date</div><div class="grid"><input id="sn" placeholder="Occasion *"><select id="st"><option>Anniversary</option><option>Birthday</option><option>Holiday</option><option>Milestone</option><option>Other</option></select><input id="sd" type="date"></div><input id="si" style="width:100%;margin-top:8px" placeholder="Celebration idea"><div style="margin-top:8px"><button class="btn" id="sadd">Save</button></div></div>
-<div class="tabs"><button data-tab="pick" class="on">🎲 Pick</button><button data-tab="bank">📖 Bank</button><button data-tab="dash">📊 Dashboard</button><button data-tab="mem">💞 Memories</button><button data-tab="wish">✨ Wishlist</button><button data-tab="mon">📅 Months</button><button data-tab="spc">🎉 Special</button></div>
+<div class="tabs"><button data-tab="pick" class="on">🎲 Pick</button><button data-tab="bank">📖 Bank</button><button data-tab="dash">📊 Dashboard</button><button data-tab="mem">💞 Memories</button><button data-tab="wish">✨ Wishlist</button><button data-tab="mon">📅 Months</button><button data-tab="spc">🎉 Special</button><button data-tab="set">⚙️ Settings</button></div>
 <div id="view"></div>
 <p style="text-align:center"><button class="btn ghost" id="signout">Sign out</button></p></div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script>
 const CATS=["🍽️ Dinner","🥞 Breakfast","🥗 Lunch","☕ Café / Coffee","🍿 Movies","🎨 Creative / Arts","🎮 Games","🎵 Music / Concert","🏖️ Beach","🌳 Outdoor","🧗 Adventure","🏎️ Adrenaline","🧖 Relaxation / Spa","🏨 Staycation","✈️ Day Trip","🌃 Nightlife","🛍️ Shopping","🍷 Wine / Drinks","🍳 Cook Together","🏠 At-Home Date","📸 Photoshoot","❤️ Romantic","🎉 Special Occasion","💡 Random / Unplanned"];
@@ -78,10 +101,12 @@ const opts=(a,sel)=>a.map(x=>`<option${x===sel?" selected":""}>${esc(x)}</option
 $("#c").innerHTML=opts(CATS);$("#bf").innerHTML=opts(BEST);
 
 
-const cfg=window.APP_CONFIG,sb=supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY);
+const cfg=window.APP_CONFIG,RK="db_remember",BK="db_bio",IK="db_icon";
+const store={get k(){return localStorage.getItem(RK)==="0"?sessionStorage:localStorage},getItem(x){return this.k.getItem(x)},setItem(x,v){this.k.setItem(x,v)},removeItem(x){localStorage.removeItem(x);sessionStorage.removeItem(x)}};
+const sb=supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY,{auth:{storage:store,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const msg=t=>$("#msg").innerHTML=t?`<div class="note">${esc(t)}</div>`:"";
 let wish=[],spec=[];const arr=id=>id[0]==="w"?wish:id[0]==="s"?spec:items,uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-async function load(){const{data,error}=await sb.from("dates").select("id,data");if(error){msg(error.message);return}const r=data.map(x=>({...x.data,id:x.id}));items=r.filter(x=>x.id[0]==="d");wish=r.filter(x=>x.id[0]==="w");spec=r.filter(x=>x.id[0]==="s");render()}
+async function load(){const{data,error}=await sb.from("dates").select("id,data");if(error){msg(error.message);return}const r=data.map(x=>({...x.data,id:x.id}));items=r.filter(x=>x.id[0]==="d");wish=r.filter(x=>x.id[0]==="w");spec=r.filter(x=>x.id[0]==="s");tab==="set"?stats():render()}
 async function save(i){const a=arr(i.id),k=a.findIndex(x=>x.id===i.id);k<0?a.push(i):a[k]=i;render();const{error}=await sb.from("dates").upsert({id:i.id,data:i});if(error){msg("Couldn’t save: "+error.message);load()}}
 async function del(id){const a=arr(id),k=a.findIndex(x=>x.id===id);if(k>=0)a.splice(k,1);render();const{error}=await sb.from("dates").delete().eq("id",id);if(error)msg(error.message)}
 const mk=o=>({id:"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),status:"Not Yet",added:Date.now(),desc:"",went:"",rating:0,spent:"",notes:"",...o});
@@ -167,7 +192,7 @@ function viewMon(){const now=new Date(),R=[];for(let k=0;k<12;k++){const d=new D
 const nextOcc=s=>{const[,m,d]=s.date.split("-").map(Number),t=new Date();t.setHours(0,0,0,0);let o=new Date(t.getFullYear(),m-1,d);if(o<t)o=new Date(t.getFullYear()+1,m-1,d);return o};
 function viewSpec(){const t=new Date();t.setHours(0,0,0,0);const L=spec.filter(x=>x.date).map(x=>{const o=nextOcc(x);return{...x,o,days:Math.round((o-t)/864e5)}}).sort((a,b)=>a.days-b.days);
  return (L.length?"":`<div class="card">No special dates yet. <button class="btn" data-act="sseed">Add Valentine’s, Christmas &amp; New Year’s Eve</button></div>`)+L.map(x=>`<div class="card"><div class="name">${esc(x.name)} <span class="tag">${esc(x.type)}</span></div><div>${x.o.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"})} · <b>${x.days==0?"today 🎉":"in "+x.days+" days"}</b></div><div class="mut">${esc(x.idea)}</div><button class="btn ghost" data-act="sdel" data-id="${x.id}" style="margin-top:6px">Remove</button></div>`).join("")}
-function render(){stats();$("#wf").hidden=tab!=="wish";$("#sf").hidden=tab!=="spc";$(".add").hidden=!["pick","bank"].includes(tab);$("#view").innerHTML=({pick:viewPick,bank:viewBank,mem:viewMem,dash:viewDash,wish:viewWish,mon:viewMon,spc:viewSpec})[tab]()}
+function render(){stats();$("#wf").hidden=tab!=="wish";$("#sf").hidden=tab!=="spc";$(".add").hidden=!["pick","bank"].includes(tab);$("#view").innerHTML=({pick:viewPick,bank:viewBank,mem:viewMem,dash:viewDash,wish:viewWish,mon:viewMon,spc:viewSpec,set:viewSet})[tab]()}
 $("#wc").innerHTML=opts(CATS);
 $("#wadd").onclick=()=>{const n=$("#wn").value.trim();if(!n)return;save({id:"w"+uid(),name:n,cat:$("#wc").value,loc:$("#wl").value,budget:+$("#wb").value||0,why:$("#ww").value,prio:$("#wp").value,wstatus:"💭 Thinking",added:Date.now()});["wn","wl","wb","ww"].forEach(x=>$("#"+x).value="")};
 $("#sadd").onclick=()=>{const n=$("#sn").value.trim();if(!n||!$("#sd").value)return;save({id:"s"+uid(),name:n,type:$("#st").value,date:$("#sd").value,idea:$("#si").value});["sn","sd","si"].forEach(x=>$("#"+x).value="")};
@@ -177,10 +202,74 @@ $("#view").addEventListener("click",async e=>{const b=e.target.closest("[data-ac
  if(a==="sdel"&&confirm("Remove this special date?"))del(id);
  if(a==="sseed"){const y=new Date().getFullYear();for(const x of [["Valentine’s Day","Holiday",y+"-02-14","Candlelight dinner and a handwritten note"],["Christmas Day","Holiday",y+"-12-25","Matching pyjamas and a long lunch at home"],["New Year’s Eve","Holiday",y+"-12-31","Rooftop countdown or a quiet night in"]])await save({id:"s"+uid(),name:x[0],type:x[1],date:x[2],idea:x[3]})}});
 $("#view").addEventListener("change",e=>{const id=e.target.dataset.w;if(id){const w=wish.find(x=>x.id===id);if(w)save({...w,wstatus:e.target.value})}});
-function start(){$("#auth").hidden=true;$("#app").hidden=false;load();sb.channel("dates").on("postgres_changes",{event:"*",schema:"public",table:"dates"},load).subscribe()}
-$("#signin").onclick=async()=>{const{error}=await sb.auth.signInWithPassword({email:$("#em").value.trim(),password:$("#pw").value});error?msg(error.message):(msg(""),start())};
-$("#signup").onclick=async()=>{const{error}=await sb.auth.signUp({email:$("#em").value.trim(),password:$("#pw").value});msg(error?error.message:"Account created — now tap Sign in (check your email first if Supabase asks you to confirm).")};
-$("#signout").onclick=async()=>{await sb.auth.signOut();location.reload()};
-sb.auth.getSession().then(({data})=>{data.session?start():($("#auth").hidden=false)});
+
+const NETERR="Something went wrong. Please check your connection and try again.",GENERIC="If an account exists with this email, you’ll receive a password reset link shortly.";
+const okEmail=e=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e),strong=p=>p.length>=8&&/[A-Za-z]/.test(p)&&/\d/.test(p);
+const isNet=e=>!e||/fetch|network|Failed/i.test(e.message||"")||e.name==="AuthRetryableFetchError"||e.status===0;
+const EYES='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.9 10.9 0 0 1 12 20C5 20 1 12 1 12a18.5 18.5 0 0 1 5.1-5.9M9.9 4.2A9.1 9.1 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.2 3.2M14.1 14.1a3 3 0 1 1-4.2-4.2M1 1l22 22"/></svg>';
+const EYE0=document.querySelector(".eye").innerHTML;
+document.addEventListener("click",e=>{const b=e.target.closest("[data-eye]");if(!b)return;const i=document.getElementById(b.dataset.eye),show=i.type==="password";i.type=show?"text":"password";b.innerHTML=show?EYES:EYE0;b.setAttribute("aria-label",show?"Hide password":"Show password")});
+const busy=(b,t)=>{b.disabled=true;b.dataset.t=b.textContent;b.textContent=t},idle=b=>{b.disabled=false;b.textContent=b.dataset.t||b.textContent};
+const sbKeys=st=>Object.keys(st).filter(k=>/^sb-.*-auth-token/.test(k));
+function moveSession(remember){const from=remember?sessionStorage:localStorage,to=remember?localStorage:sessionStorage;sbKeys(from).forEach(k=>{to.setItem(k,from.getItem(k));from.removeItem(k)})}
+const remembered=()=>localStorage.getItem(RK)!=="0";
+function showAuth(v){$("#app").hidden=true;$("#auth").hidden=false;["login","forgot","reset","lock"].forEach(x=>$("#v-"+x).hidden=x!==v)}
+let me={email:"",bio:false},recovering=/type=recovery/.test(location.hash);
+const bioSupported=async()=>{try{return !!(window.PublicKeyCredential&&navigator.credentials&&await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())}catch(e){return false}};
+const bioOn=()=>!!localStorage.getItem(BK),b64=b=>btoa(String.fromCharCode(...new Uint8Array(b))),unb64=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0)),rnd=n=>crypto.getRandomValues(new Uint8Array(n));
+async function bioEnable(){const c=await navigator.credentials.create({publicKey:{challenge:rnd(32),rp:{name:"Our Date Bank"},user:{id:rnd(16),name:me.email||"us",displayName:me.email||"us"},pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required"},timeout:60000}});localStorage.setItem(BK,b64(c.rawId))}
+async function bioCheck(){await navigator.credentials.get({publicKey:{challenge:rnd(32),allowCredentials:[{type:"public-key",id:unb64(localStorage.getItem(BK))}],userVerification:"required",timeout:60000}})}
+async function start(){showApp();const{data}=await sb.auth.getUser();me.email=data?.user?.email||"";me.bio=await bioSupported();load();sb.channel("dates").on("postgres_changes",{event:"*",schema:"public",table:"dates"},load).subscribe()}
+function showApp(){$("#auth").hidden=true;$("#app").hidden=false;msg("")}
+async function logout(scope){try{await sb.auth.signOut({scope})}catch(e){}sbKeys(localStorage).forEach(k=>localStorage.removeItem(k));sbKeys(sessionStorage).forEach(k=>sessionStorage.removeItem(k));localStorage.removeItem(BK);location.reload()}
+document.querySelectorAll(".tolog").forEach(a=>a.onclick=e=>{e.preventDefault();msg("");showAuth("login")});
+$("#tofg").onclick=e=>{e.preventDefault();msg("");$("#fe").value=$("#em").value;showAuth("forgot")};
+$("#usepw").onclick=async e=>{e.preventDefault();await logout("local")};
+$("#signin").onclick=async()=>{const b=$("#signin"),email=$("#em").value.trim(),p=$("#pw").value;
+ if(!okEmail(email))return msg("Please enter a valid email address.");if(!p)return msg("Please enter your password.");
+ const rm=$("#rm").checked;localStorage.setItem(RK,rm?"1":"0");busy(b,"Signing in…");
+ try{const{error}=await sb.auth.signInWithPassword({email,password:p});
+  if(error)msg(isNet(error)?NETERR:/not confirmed/i.test(error.message)?"Please confirm your email first (check your inbox), then sign in.":"Incorrect email or password.");
+  else{moveSession(rm);$("#pw").value="";start()}}catch(e){msg(NETERR)}idle(b)};
+$("#signup").onclick=async()=>{const b=$("#signup"),email=$("#em").value.trim(),p=$("#pw").value;
+ if(!okEmail(email))return msg("Please enter a valid email address.");if(!strong(p))return msg("Choose a stronger password: at least 8 characters, with a letter and a number.");
+ busy(b,"Creating account…");try{const{error}=await sb.auth.signUp({email,password:p});msg(error?(isNet(error)?NETERR:error.message):"Account created — now tap SIGN IN (check your email first if Supabase asks you to confirm).")}catch(e){msg(NETERR)}idle(b)};
+$("#fgbtn").onclick=async()=>{const b=$("#fgbtn"),email=$("#fe").value.trim();if(!okEmail(email))return msg("Please enter a valid email address.");
+ busy(b,"Sending reset link…");try{const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+"/"});
+  msg(error&&isNet(error)?NETERR:error&&/rate|seconds/i.test(error.message)?"Please wait a minute before requesting another link.":GENERIC)}catch(e){msg(NETERR)}idle(b)};
+$("#rsbtn").onclick=async()=>{const b=$("#rsbtn"),p=$("#np").value,p2=$("#np2").value;
+ if(!strong(p))return msg("Weak password: use at least 8 characters, with a letter and a number.");if(p!==p2)return msg("The two passwords don’t match.");
+ busy(b,"Updating…");try{const{error}=await sb.auth.updateUser({password:p});
+  if(error)msg(isNet(error)?NETERR:/weak/i.test(error.message+(error.code||""))?"That password is too weak. Try a longer one.":/same/i.test(error.message)?"Choose a password you haven’t used before.":/session|expired|missing/i.test(error.message)?"This reset link has expired or was already used. Please request a new one.":"Couldn’t update the password. Please request a new reset link.");
+  else{recovering=false;await logout_keep();$("#np").value=$("#np2").value="";showAuth("login");msg("Your password has been updated successfully. Please sign in.")}}catch(e){msg(NETERR)}idle(b)};
+async function logout_keep(){try{await sb.auth.signOut({scope:"local"})}catch(e){}sbKeys(localStorage).forEach(k=>localStorage.removeItem(k));sbKeys(sessionStorage).forEach(k=>sessionStorage.removeItem(k))}
+$("#biobtn").onclick=async()=>{const b=$("#biobtn");busy(b,"Authenticating…");try{await bioCheck();start()}catch(e){msg("Biometric authentication failed. Please try again or sign in with your password.")}idle(b)};
+$("#signout").onclick=()=>logout("local");
+sb.auth.onAuthStateChange(ev=>{if(ev==="PASSWORD_RECOVERY"){recovering=true;history.replaceState(null,"",location.pathname);showAuth("reset")}});
+(async()=>{const hp=new URLSearchParams(location.hash.slice(1)+"&"+location.search.slice(1));
+ if(hp.get("error")||hp.get("error_code")){history.replaceState(null,"",location.pathname);showAuth("forgot");msg("That reset link has expired or was already used. Enter your email to get a new one.");return}
+ try{const{data}=await sb.auth.getSession();
+  if(recovering||location.hash.includes("type=recovery")){history.replaceState(null,"",location.pathname);showAuth("reset");return}
+  if(data.session){bioOn()&&await bioSupported()?showAuth("lock"):start()}else showAuth("login")}catch(e){showAuth("login");msg(NETERR)}})();
+// ---- settings ----
+const ICONS=[["wine","Wine","apple-touch-icon.png"],["navy","Navy","icon-navy.png"],["forest","Forest","icon-forest.png"],["gold","Charcoal & Gold","icon-gold.png"]];
+function applyIcon(k){const f=(ICONS.find(x=>x[0]===k)||ICONS[0])[2];document.querySelectorAll('link[rel="apple-touch-icon"],link[rel="icon"]').forEach(l=>l.href=f);if(!document.querySelector('link[rel="icon"]')){const l=document.createElement("link");l.rel="icon";l.href=f;document.head.appendChild(l)}}
+applyIcon(localStorage.getItem(IK)||"wine");
+function viewSet(){const rm=remembered(),bo=bioOn(),ic=localStorage.getItem(IK)||"wine";
+ return sec("🔐 Account & Security",`<div class="kv"><span>Signed in as</span><b>${esc(me.email||"—")}</b></div>
+ <div class="kv"><span>Saved login: <b>${rm?"Enabled":"Disabled"}</b><br><small class="mut">${rm?"You stay signed in on this device.":"You’ll need to sign in again after closing the app."}</small></span><button class="btn ghost" data-act="rm">${rm?"Turn off":"Turn on"}</button></div>
+ <div class="kv"><span>Biometric login: <b>${bo?"Enabled":"Disabled"}</b><br><small class="mut">${me.bio?"Unlock with Face ID / fingerprint when you open the app.":"Not available on this device or browser."}</small></span>${me.bio?`<button class="btn ${bo?"ghost":""}" data-act="${bo?"biooff":"bioon"}">${bo?"Disable":"Enable"}</button>`:""}</div>
+ <div style="padding:10px 0"><b>Change password</b><label class="l" for="cp1">New password</label><div class="pw"><input id="cp1" type="password" autocomplete="new-password"><button type="button" class="eye" data-eye="cp1" aria-label="Show password">${EYE0}</button></div><label class="l" for="cp2">Repeat new password</label><div class="pw"><input id="cp2" type="password" autocomplete="new-password"><button type="button" class="eye" data-eye="cp2" aria-label="Show password">${EYE0}</button></div><button class="btn full" data-act="chpw">Update password</button></div>
+ <div class="row"><button class="btn ghost" data-act="logout">Log out</button><button class="btn ghost" data-act="logoutall">Log out of all devices</button></div>`)
+ +sec("🖼️ App icon",`<div class="icons">${ICONS.map(x=>`<button data-act="icon" data-id="${x[0]}" class="${ic===x[0]?"on":""}" aria-label="${x[1]}"><img src="${x[2]}" alt="${x[1]}"></button>`).join("")}</div><p class="mut">iPhone reads the icon at the moment you tap <b>Add to Home Screen</b>. Pick one here first, then remove the old shortcut and add the app again. (Safari can’t change an icon that’s already installed.)</p>`)}
+$("#view").addEventListener("click",async e=>{const b=e.target.closest("[data-act]");if(!b||tab!=="set")return;const a=b.dataset.act;
+ if(a==="rm"){const to=!remembered();localStorage.setItem(RK,to?"1":"0");moveSession(to);msg(to?"Saved login turned on.":"Saved login turned off.")}
+ if(a==="bioon"){try{await bioEnable();msg("Biometric login enabled.")}catch(x){msg("Couldn’t turn on biometric login. Please try again.")}}
+ if(a==="biooff"){localStorage.removeItem(BK);msg("Biometric login disabled.")}
+ if(a==="icon"){localStorage.setItem(IK,b.dataset.id);applyIcon(b.dataset.id)}
+ if(a==="logout")return logout("local");if(a==="logoutall")return logout("global");
+ if(a==="chpw"){const p=$("#cp1").value,p2=$("#cp2").value;if(!strong(p))return msg("Weak password: use at least 8 characters, with a letter and a number.");if(p!==p2)return msg("The two passwords don’t match.");
+  busy(b,"Updating…");try{const{error}=await sb.auth.updateUser({password:p});msg(error?(isNet(error)?NETERR:/same/i.test(error.message)?"Choose a password you haven’t used before.":"Couldn’t update the password: "+error.message):"Your password has been updated successfully.")}catch(x){msg(NETERR)}idle(b);if(!$("#msg").textContent.includes("Couldn")){$("#cp1").value=$("#cp2").value=""}return}
+ render()});
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
 </script></body></html>
